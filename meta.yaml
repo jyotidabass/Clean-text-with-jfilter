@@ -1,34 +1,24 @@
+{% set vcver="14.2" %}
+{% set vcfeature="14" %}
+{% set vsyear="2019" %}
+{% set fullver="15.4.27004.2010" %}
+
 package:
-  name: torchtext
-  version: 0.4.0
-
-source:
-  url: https://github.com/pytorch/text/archive/0.4.0.zip
-
-requirements:
-  build:
-    - python
-    - setuptools
-
-  run:
-    - python
-    - tqdm
-    - numpy >=1.11
-    - pytorch >=1.2
-    - requests
+  name: vs{{ vsyear }}
+  version: {{ fullver }}
 
 build:
-  number: 1
-  noarch: python
-  script: python setup.py install --single-version-externally-managed --record=record.txt
+  skip: True  [not win]
+  script_env:
+    - VSDEVCMD_ARGS # [win]
 
-test:
-  imports:
-    - torchtext
-    - torchtext.data
-
-about:
-  home: https://github.com/pytorch/text
-  license: BSD
-  license_file: LICENSE
-  summary: "PyTorch Data loaders and abstractions for text and NLP"
+outputs:
+  - name: vs{{ vsyear }}_{{ cross_compiler_target_platform }}
+    script: install_activate.bat
+    track_features:
+      # VS 2019 is binary-compatible with VS 2017/vc 14.1 and 2015/vc14.  Tools are "v142".
+      strong:
+        - vc{{ vcfeature }}
+    about:
+      summary: Activation and version verification of MSVC {{ vcver }} (VS {{ vsyear }}) compiler
+      license: BSD 3-clause
